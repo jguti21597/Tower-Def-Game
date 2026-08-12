@@ -4,6 +4,7 @@ using Unity.Collections;
 using UnityEngine;
 using Unity.Jobs;
 using UnityEngine.Jobs;
+using System.Numerics;
 
 public class GameM : MonoBehaviour
 {
@@ -13,9 +14,14 @@ public class GameM : MonoBehaviour
     public static Vector3[] NodePositions;
     public Transform NodeParent;
     public bool GameShouldEnd;
+    public static float[] NodeDistances;
+    public static List<WizardActions> WizardsInGame;
+
+
 
     private void Start()
     {
+        WizardsInGame = new List<WizardActions>();
         EnemyIDsToSpawn = new Queue<int>();
         EnemiesToRemove = new Queue<Enemy>();
         Spawner.Init();
@@ -24,6 +30,12 @@ public class GameM : MonoBehaviour
         for (int i=0;i < NodePositions.Length; i++)
         {
             NodePositions[i] = NodeParent.GetChild(i).position;
+        }
+
+        NodeDistances = new float[NodePositions.Length - 1];
+        for (int i=0;i < NodeDistances.Length; i++)
+        {
+            NodeDistances[i] = Vector3.Distance(NodePositions[i], NodePositions[i+1]);
         }
         
         StartCoroutine(Gameloop());
